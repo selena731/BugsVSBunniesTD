@@ -26,7 +26,7 @@ namespace DefaultNamespace
         public virtual void OnUpdate(){}
 
         public virtual void OnClick(){}
-        public virtual void OnHoverIndo(bool toggle){}
+        public virtual void OnHoverInfo(bool toggle){}
         public virtual void OnDetailedInfo(bool toggle){}
         public virtual void OnToggle(bool toggle){}
         public virtual void OnCancel(){}
@@ -112,7 +112,7 @@ namespace DefaultNamespace
         private void D_OnHoverInfo(bool? overrideToggle = null)
         {
             _infoToggle = overrideToggle ?? !_infoToggle;
-            OnHoverIndo(_infoToggle);
+            OnHoverInfo(_infoToggle);
         }
 
         private void D_OnDetailedInfo(bool? overrideToggle = null)

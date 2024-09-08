@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DefaultNamespace.Game;
 using DefaultNamespace.OnDeathEffects;
 using DefaultNamespace.TowerSystem;
 using Unity.Mathematics;
@@ -40,19 +41,19 @@ namespace DefaultNamespace
        
         private void Update()
         {
-            durationTimer += Time.deltaTime;
+            durationTimer += GameSpeed.GameDeltaTime;
             if (durationTimer > 10) // Total Life Duration
                 Dispose();
 
             if (!CheckTargetAvaliablity())
             {
-                transform.position += _lastDirection.normalized * _bulletConfig.speed * Time.deltaTime;
+                transform.position += _lastDirection.normalized * _bulletConfig.speed * GameSpeed.GameDeltaTime;
                 return;
             }
 
             _lastDirection = _target.mTransform.position - transform.position;
             transform.position = Vector3.MoveTowards(transform.position, _target.mTransform.position,
-                _bulletConfig.speed * Time.deltaTime);
+                _bulletConfig.speed * GameSpeed.GameDeltaTime);
         }
 
         private void OnTriggerEnter(Collider other)

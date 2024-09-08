@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace.Game;
 using UnityEngine;
 
 public class MenuHook : MonoBehaviour
@@ -19,7 +20,8 @@ public class MenuHook : MonoBehaviour
         if(PauseIfEnabled)
         {
             IsPaused = false;
-            Time.timeScale = 1f;
+            // Time.timeScale = 1f;
+            GameSpeed.ResumeGame(eTimeScale.GameTimeScale);
         }
     }
     private void OnEnable()
@@ -27,7 +29,8 @@ public class MenuHook : MonoBehaviour
         if(PauseIfEnabled)
         {
             IsPaused = true;
-            Time.timeScale = 0f;
+            // Time.timeScale = 0f;
+            GameSpeed.PauseGame(eTimeScale.GameTimeScale);
         }
     }
     private void OnDestroy()
@@ -35,7 +38,8 @@ public class MenuHook : MonoBehaviour
         if (PauseIfEnabled)
         {
             IsPaused = false;
-            Time.timeScale = 1;
+            // Time.timeScale = 1;
+            GameSpeed.ResumeGame(eTimeScale.GameTimeScale);
         }
     }
     void Update()

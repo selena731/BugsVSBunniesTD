@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace.Game;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -18,6 +19,8 @@ public class EnemySpawner : MonoBehaviour
     private float totalWavesToSpawn;
     public Action WaveEnded;
     public Action WavesCompleted;
+
+    private float spawnDelayTimer = 0;
     
 
     public Action WaveStarted;
@@ -91,7 +94,8 @@ public class EnemySpawner : MonoBehaviour
                     p.currentNode = initTarget;
                 }
 
-                yield return new WaitForSeconds(current.SpawnDelayTime);
+                // yield return new WaitForSeconds(current.SpawnDelayTime);
+                yield return new WaitUntil(() => GameSpeed.GameTimerCheck(ref spawnDelayTimer, current.SpawnDelayTime));
             }
 
             if (current.WaitUntilCompletion) yield return new WaitUntil(hasNoChildren);

@@ -1,3 +1,4 @@
+using DefaultNamespace.Game;
 using DefaultNamespace.OnDeathEffects;
 using UnityEngine;
 using UnityEngine.AI;
@@ -45,6 +46,7 @@ public abstract class Enemy : MonoBehaviour, IEnemyUnit, IDebuffable
         if (IsDead) return;
         
         DebuffHandler.HandleDebuff();
+        agent.speed = Config.speed * GameSpeed.TimeScale(eTimeScale.GameTimeScale);
     }
 
     public bool TakeDamage(float amount, bool killAfter = true)

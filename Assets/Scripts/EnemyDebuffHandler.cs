@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DefaultNamespace.Game;
 using DefaultNamespace.OnDeathEffects;
 using UnityEngine;
 
@@ -39,9 +40,9 @@ public class EnemyDebuffHandler : IDebuffHandler
     {
         for (int i = ActiveDebuffs.Count - 1; i >= 0; i--)
         {
-            ActiveDebuffs[i].UpdateDebuff(Time.deltaTime);
+            ActiveDebuffs[i].UpdateDebuff(GameSpeed.GameDeltaTime);
             
-            if (ActiveDebuffs[i].UpdateTimer(Time.deltaTime))
+            if (ActiveDebuffs[i].UpdateTimer(GameSpeed.GameDeltaTime))
             {
                 ActiveDebuffs[i].RemoveEffect(unit);
                 ActiveDebuffs.RemoveAt(i);

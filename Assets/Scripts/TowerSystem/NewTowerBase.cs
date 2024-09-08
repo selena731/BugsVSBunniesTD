@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace.Game;
 using Helper;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -26,6 +28,7 @@ namespace DefaultNamespace.TowerSystem
         protected float AudioTimer = 0;
 
         protected bool isDisabled = false;
+        private float fireTimer = 0;
 
         public bool IsDisabled
         {
@@ -48,9 +51,14 @@ namespace DefaultNamespace.TowerSystem
             FireRoutine = StartCoroutine(FireLoopCo());
         }
 
+        private void Update()
+        {
+            UpdateShootTimer();
+        }
+
         protected virtual void OnFire()
         {
-            if (!CanShoot()) return;
+            if (!IsShooting) return;
             
             var spawnPos = BulletSource.position + new Vector3(0, 1, 0);
             var bullet = Instantiate(Config.BulletConfig.prefab, spawnPos, transform.rotation);
@@ -60,28 +68,33 @@ namespace DefaultNamespace.TowerSystem
             PlaySoundFX();
         }
 
-        protected virtual bool CanShoot()
+        protected bool UpdateShootTimer()
         {
-            if (Config.burstDelay == 0) return true;
-            
-            if (BurstTimer + Config.burstDelay < Time.time)
+            if (Config.burstDelay == 0)
             {
-                BurstTimer = Time.time;
+                IsShooting = true;
+                return true;
+            }
+            
+            if (BurstTimer + Config.burstDelay < GameSpeed.GameDeltaTime)
+            {
+                BurstTimer = GameSpeed.GameDeltaTime;
                 IsShooting = !IsShooting;
             }
 
             return IsShooting;
         }
 
+
         private void PlaySoundFX()
         {
-            if (AudioTimer + Config.audioCoolDown < Time.time)
+            if (AudioTimer + Config.audioCoolDown < GameSpeed.GameDeltaTime)
             {
                 var randomClip = Config.firingSfx[Random.Range(0, Config.firingSfx.Count)];
                 // SoundFXPlayer.PlaySFX(mAudioSource, randomClip);
                 mAudioSource.PlayOneShot(randomClip, AudioManager.SFXVolume);
 
-                AudioTimer = Time.time;
+                AudioTimer = GameSpeed.GameDeltaTime;
             }
         }
         
@@ -99,7 +112,7 @@ namespace DefaultNamespace.TowerSystem
                     OnFire();
                 }
             
-                yield return new WaitForSeconds(Config.fireRate);
+                yield return new WaitUntil(() => GameSpeed.GameTimerCheck(ref fireTimer, Config.fireRate));
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace.Game;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -65,11 +66,7 @@ public class CameraMover : MonoBehaviour
     [Tooltip("Sets the TimeScale to value, but it if it is already that value it just resets it to 1")]
     public void ToggleSetTimeSpeed(float value)
     {
-        if(targetTimeScale==value)
-        {
-            value = 1;
-        }
-        targetTimeScale = value;
+        GameSpeed.TimeScale(eTimeScale.GameTimeScale, value);
     }
     private void Update()
     {
@@ -83,7 +80,7 @@ public class CameraMover : MonoBehaviour
         {
             if (MenuHook.IsPaused)
             {
-                Time.timeScale = 0;
+                GameSpeed.PauseGame(eTimeScale.GameTimeScale);
             }
             else
             {
@@ -91,10 +88,10 @@ public class CameraMover : MonoBehaviour
 
                 if (Input.GetAxis("Accelerate") > 0)
                 {
-                    Time.timeScale = Math.Max(targetTimeScale, TimeSpeedUpSpeed);
+                    GameSpeed.TimeScale(eTimeScale.GameTimeScale,Math.Max(targetTimeScale, TimeSpeedUpSpeed));
                 }
                 else
-                    Time.timeScale = targetTimeScale;
+                    GameSpeed.TimeScale(eTimeScale.GameTimeScale, targetTimeScale);
             }
 
         }
@@ -102,16 +99,16 @@ public class CameraMover : MonoBehaviour
         if (rotationType == RotationType.PivotUpDown)
         {
 
-            transform.eulerAngles += new Vector3(0, -Input.GetAxis("Horizontal")*Time.deltaTime * OrbitSpeed, 0);
-            float verticalOrbit = -Input.GetAxis("Vertical") * VerticalSpeed/(Mathf.Max(1,Time.timeScale));
+            transform.eulerAngles += new Vector3(0, -Input.GetAxis("Horizontal")*GameSpeed.GameDeltaTime * OrbitSpeed, 0);
+            float verticalOrbit = -Input.GetAxis("Vertical") * VerticalSpeed/(Mathf.Max(1,GameSpeed.GameDeltaTime));
             target.localEulerAngles += new Vector3(verticalOrbit, 0, 0);
 
             target.localEulerAngles = new Vector3(Mathf.Max(Mathf.Min(MaxPitch, target.localEulerAngles.x), MinPitch), target.localEulerAngles.y, target.localEulerAngles.z);
         }
         else if(rotationType==RotationType.WalkingOrbit)
         {
-            transform.eulerAngles += new Vector3(0, -Input.GetAxis("Horizontal")*(1 / (Mathf.Max(1, Time.timeScale))) * Time.deltaTime * OrbitSpeed, 0);
-            Vector3 targDir = transform.GetChild(0).forward * VerticalSpeed * Time.deltaTime * Input.GetAxis("Vertical");
+            transform.eulerAngles += new Vector3(0, -Input.GetAxis("Horizontal")*(1 / (Mathf.Max(1, Time.timeScale))) * GameSpeed.GameDeltaTime * OrbitSpeed, 0);
+            Vector3 targDir = transform.GetChild(0).forward * VerticalSpeed * GameSpeed.GameDeltaTime * Input.GetAxis("Vertical");
             targDir.y = 0;
             if(IsValid(transform.position+targDir))
                 transform.position += targDir;
@@ -124,10 +121,10 @@ public class CameraMover : MonoBehaviour
         else if (rotationType==RotationType.Walking)
         {
 
-            target.eulerAngles += new Vector3(0, -Input.GetAxis("Orbit") * (1 / (Mathf.Max(1, Time.timeScale))) * Time.deltaTime * AltOrbitSpeed, 0);
+            target.eulerAngles += new Vector3(0, -Input.GetAxis("Orbit") * (1 / (Mathf.Max(1, Time.timeScale))) * GameSpeed.GameDeltaTime * AltOrbitSpeed, 0);
 
-            Vector3 targDir =target.forward * VerticalSpeed * (1 / (Mathf.Max(1, Time.timeScale))) * Time.deltaTime * Input.GetAxis("Vertical");
-            targDir += target.right * OrbitSpeed * (1 / (Mathf.Max(1, Time.timeScale))) * Time.deltaTime * Input.GetAxis("Horizontal");
+            Vector3 targDir =target.forward * VerticalSpeed * (1 / (Mathf.Max(1, Time.timeScale))) * GameSpeed.GameDeltaTime * Input.GetAxis("Vertical");
+            targDir += target.right * OrbitSpeed * (1 / (Mathf.Max(1, Time.timeScale))) * GameSpeed.GameDeltaTime * Input.GetAxis("Horizontal");
             targDir.y = 0;
             if (IsValid(transform.position + targDir))
                 transform.position += targDir;
@@ -143,7 +140,7 @@ public class CameraMover : MonoBehaviour
         {
             Vector3 targ_dir = -target.forward;
 
-            CurTargDist += -Input.GetAxis("Mouse ScrollWheel") * (1 / (Mathf.Max(1, Time.timeScale))) * Time.deltaTime * ScrollSpeed;
+            CurTargDist += -Input.GetAxis("Mouse ScrollWheel") * (1 / (Mathf.Max(1, Time.timeScale))) * GameSpeed.GameDeltaTime * ScrollSpeed;
             CurTargDist = Mathf.Min(Mathf.Max(MinDist, CurTargDist), MaxDist);
 
             CurDist = (CurDist * 4 + CurTargDist) / 5f;
